@@ -1,11 +1,17 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { getTicketById, cancelTicket } from '../../../utils/ticketApi';
-import QRCodeDisplay from '../../components/QRCodeDisplay';
+import dynamic from 'next/dynamic';
 import Loading from '../../components/Loading';
+
+// Dynamically import QRCodeDisplay with SSR disabled
+const QRCodeDisplay = dynamic(() => import('../../components/QRCodeDisplay'), {
+  ssr: false,
+  loading: () => <div className="bg-white rounded-lg p-6 shadow-lg"><Loading /></div>
+});
 
 export default function TicketDetailPage() {
   const params = useParams();
@@ -239,7 +245,9 @@ export default function TicketDetailPage() {
           {/* QR Code Section */}
           {ticket.qrCode && ticket.status === 'active' && (
             <div className="mb-6">
-              <QRCodeDisplay qrCode={ticket.qrCode} ticketId={ticket.ticketId} />
+              <Suspense fallback={<div className="bg-white rounded-lg p-6 shadow-lg"><Loading /></div>}>
+                <QRCodeDisplay qrCode={ticket.qrCode} ticketId={ticket.ticketId} />
+              </Suspense>
             </div>
           )}
 

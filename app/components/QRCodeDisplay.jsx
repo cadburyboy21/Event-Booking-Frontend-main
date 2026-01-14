@@ -4,6 +4,8 @@ import React from 'react';
 
 export default function QRCodeDisplay({ qrCode, ticketId }) {
   const handleDownload = () => {
+    if (typeof window === 'undefined') return;
+
     const link = document.createElement('a');
     link.href = qrCode;
     link.download = `ticket-${ticketId}.png`;
@@ -13,6 +15,8 @@ export default function QRCodeDisplay({ qrCode, ticketId }) {
   };
 
   const handlePrint = () => {
+    if (typeof window === 'undefined') return;
+
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`
       <html>
